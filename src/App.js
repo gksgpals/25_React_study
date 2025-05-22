@@ -1,56 +1,29 @@
-import React, { useRef, useState } from 'react';
-import CreateUser from './CreateUser';
-import UserList from './UserList';
+import React, { useState } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
+import MemoForm from './components/MemoForm';
+import MemoList from './components/MemoList';
+
+const AppBlock = styled.div`
+  width: 600px;
+  margin: 3rem auto;
+  padding: 2rem;
+  border: 1px solid #ccc;
+`;
 
 function App() {
-  const [inputs, setInputs] = useState({ todo: '' });
-  const { todo } = inputs;
+  const [memos, setMemos] = useState([]);
 
-  const onChange = e => {
-    const { name, value } = e.target;
-    setInputs(prev => ({ ...prev, [name]: value }));
-  };
-
-  const [users, setUsers] = useState([
-    { id: 1, todo: '밥 먹기', active: true },
-    { id: 2, todo: '학교 가기', active: false },
-    { id: 3, todo: '운동하기', active: false },
-  ]);
-
-  const nextId = useRef(4);
-  const onCreate = () => {
-    if (!todo.trim()) return;
-    const newItem = { id: nextId.current, todo, active: false };
-    setUsers(prev => prev.concat(newItem));
-    setInputs({ todo: '' });
-    nextId.current += 1;
-  };
-
-  const onRemove = id => {
-    setUsers(prev => prev.filter(item => item.id !== id));
-  };
-
-  const onToggle = id => {
-    setUsers(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, active: !item.active } : item
-      )
-    );
+  const addMemo = (title, content) => {
+    setMemos([...memos, { id: Date.now(), title, content }]);
   };
 
   return (
-    <div>
-      <CreateUser
-        todo={todo}
-        onChange={onChange}
-        onCreate={onCreate}
-      />
-      <UserList
-        users={users}
-        onRemove={onRemove}
-        onToggle={onToggle}
-      />
-    </div>
+    <ThemeProvider theme={{ palette: { primary: '#228be6', gray: '#495057' } }}>
+      <AppBlock>
+        <MemoForm onAdd={addMemo} />
+        <MemoList memos={memos} />
+      </AppBlock>
+    </ThemeProvider>
   );
 }
 
